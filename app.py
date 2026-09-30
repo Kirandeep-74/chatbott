@@ -15,22 +15,18 @@ st.set_page_config(
 )
 
 # --------------------------------------------------
-# LOAD ENVIRONMENT VARIABLES
+# Load environment variables
 # --------------------------------------------------
 
-load_dotenv()
+load_dotenv() # Keeps local .env working
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-
-# --------------------------------------------------
-# CHECK API KEY
-# --------------------------------------------------
+# Try Streamlit secrets first (Cloud), then fallback to OS environment (Local)
+API_KEY = st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
 
 if not API_KEY:
-    st.error("❌ Gemini API key not found.")
-    st.info(
-        "Please add GEMINI_API_KEY=your_key_here "
-        "inside the .env file."
+    st.error(
+        "GEMINI_API_KEY was not found. "
+        "Please add it to Streamlit Secrets or your local .env file."
     )
     st.stop()
 
