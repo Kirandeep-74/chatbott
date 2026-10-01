@@ -21,7 +21,7 @@ st.set_page_config(
 load_dotenv() # Keeps local .env working
 
 # Try Streamlit secrets first (Cloud), then fallback to OS environment (Local)
-API_KEY = st.secrets.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY")
+API_KEY = os.getenv("GEMINI_API_KEY")
 
 if not API_KEY:
     st.error(
@@ -36,7 +36,8 @@ if not API_KEY:
 
 client = genai.Client(api_key=API_KEY)
 
-MODEL_NAME = "gemini-3.5-flash"
+MODEL_NAME = "gemini-3" \
+".5-flash"
 
 # --------------------------------------------------
 # CUSTOM CSS
