@@ -22,7 +22,7 @@ def get_secret(name):
 GEMINI_API_KEY = get_secret("GEMINI_API_KEY")
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_KEY = get_secret("SUPABASE_PUBLISHABLE_KEY") or get_secret("SUPABASE_KEY")
-MODEL_NAME = get_secret("GEMINI_MODEL") or "gemini-2.5-flash"
+MODEL_NAME = get_secret("GEMINI_MODEL") or "gemini-3.5-flash"
 TTS_MODEL = get_secret("GEMINI_TTS_MODEL") or "gemini-2.5-flash-preview-tts"
 TTS_VOICE = get_secret("GEMINI_TTS_VOICE") or "Kore"
 
@@ -41,214 +41,179 @@ except Exception as e:
     st.caption(f"Error details: {e}")
     st.stop()
 
-# ---------------- THEME ----------------
-# Use an app-controlled theme instead of relying on Streamlit/Chrome's theme.
-# IMPORTANT: read the toggle widget state BEFORE generating CSS.
-# Streamlit reruns the script after the toggle changes, so this makes the
-# selected theme available to the CSS during that same rerun.
-if "theme_toggle" not in st.session_state:
-    st.session_state.theme_toggle = False
-st.session_state.dark_mode = st.session_state.theme_toggle
-
-if st.session_state.dark_mode:
-    THEME = {
-        "page": "#0b1120",
-        "surface": "#111827",
-        "card": "#1e293b",
-        "card2": "#172033",
-        "text": "#f8fafc",
-        "secondary": "#cbd5e1",
-        "muted": "#94a3b8",
-        "border": "#475569",
-        "accent": "#a5b4fc",
-        "input": "#0f172a",
-    }
-else:
-    THEME = {
-        "page": "#f5f7ff",
-        "surface": "#ffffff",
-        "card": "#ffffff",
-        "card2": "#f8fafc",
-        "text": "#1e293b",
-        "secondary": "#475569",
-        "muted": "#64748b",
-        "border": "#dbe3ef",
-        "accent": "#4f46e5",
-        "input": "#ffffff",
-    }
-
-# CSS is generated from the selected app theme on every Streamlit rerun.
-st.markdown(f"""
+st.markdown("""
 <style>
-/* ---------- App background ---------- */
-html, body, .stApp,
-[data-testid="stAppViewContainer"],
-[data-testid="stHeader"] {{
-    background: {THEME['page']} !important;
-}}
 
-[data-testid="stAppViewContainer"] {{
-    color: {THEME['text']} !important;
-}}
+/* ===== MAIN APP ===== */
+.stApp {
+    background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 50%, #f8f9ff 100%);
+}
 
-.block-container {{
-    background: {THEME['page']} !important;
-    color: {THEME['text']} !important;
-}}
-
-/* ---------- Sidebar ---------- */
-section[data-testid="stSidebar"] {{
-    background: {THEME['surface']} !important;
-    border-right: 1px solid {THEME['border']} !important;
-}}
-
-section[data-testid="stSidebar"] > div {{
-    background: {THEME['surface']} !important;
-}}
-
-section[data-testid="stSidebar"] * {{
-    color: {THEME['text']} !important;
-}}
-
-/* ---------- Text ---------- */
-h1, h2, h3, h4, h5, h6,
-.stMarkdown, .stMarkdown p, .stMarkdown li,
-label, [data-testid="stCaptionContainer"] {{
-    color: {THEME['text']} !important;
-}}
-
-.subtitle,
-.welcome-card p,
-.feature-card p {{
-    color: {THEME['secondary']} !important;
-}}
-
-.main-title {{
+/* ===== MAIN TEXT ===== */
+.main-title {
     text-align: center;
     font-size: 42px;
     font-weight: 800;
     margin-bottom: 5px;
-    color: {THEME['accent']} !important;
-}}
+    color: #4f46e5;
+}
 
-.subtitle {{
+.subtitle {
     text-align: center;
     font-size: 17px;
+    color: #64748b;
     margin-bottom: 30px;
-}}
+}
 
-/* ---------- Cards ---------- */
-.welcome-card,
-.feature-card {{
-    background: {THEME['card']} !important;
-    color: {THEME['text']} !important;
-    border: 1px solid {THEME['border']} !important;
-    border-radius: 18px;
-}}
+/* ===== SIDEBAR ===== */
+[data-testid="stSidebar"] {
+    background: #ffffff;
+}
 
-.welcome-card {{
-    padding: 25px;
-    text-align: center;
-    margin-bottom: 20px;
-}}
+[data-testid="stSidebar"] * {
+    color: #1e293b;
+}
 
-.feature-card {{
-    padding: 18px;
-    margin: 8px 0;
-}}
-
-.welcome-card h2,
-.feature-card b {{
-    color: {THEME['text']} !important;
-}}
-
-/* ---------- Buttons ---------- */
-.stButton > button {{
+/* ===== BUTTONS ===== */
+.stButton > button {
     width: 100%;
-    min-height: 42px;
-    border-radius: 12px !important;
-    background: {THEME['card']} !important;
-    color: {THEME['text']} !important;
-    border: 1px solid {THEME['border']} !important;
-}}
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    font-weight: 600;
+    background: #ffffff;
+    color: #1e293b;
+}
 
-.stButton > button p,
-.stButton > button span {{
-    color: {THEME['text']} !important;
-}}
+.stButton > button:hover {
+    border-color: #6366f1;
+}
 
-.stButton > button:hover {{
-    border-color: {THEME['accent']} !important;
-}}
+/* ===== CHAT INPUT ===== */
+[data-testid="stChatInput"] {
+    border-radius: 18px;
+}
 
-/* ---------- Text input ---------- */
-.stTextInput input,
-[data-testid="stChatInput"] textarea {{
-    background: {THEME['input']} !important;
-    color: {THEME['text']} !important;
-    caret-color: {THEME['text']} !important;
-    border-color: {THEME['border']} !important;
-}}
+/* ===== WELCOME CARD ===== */
+.welcome-card {
+    background: #ffffff;
+    color: #1e293b;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    margin-bottom: 20px;
+}
 
-.stTextInput input::placeholder,
-[data-testid="stChatInput"] textarea::placeholder {{
-    color: {THEME['muted']} !important;
-    opacity: 1 !important;
-}}
+.welcome-card h2 {
+    color: #1e293b;
+}
 
-[data-testid="stChatInput"] > div {{
-    background: {THEME['input']} !important;
-    border-color: {THEME['border']} !important;
-}}
+.welcome-card p {
+    color: #475569;
+}
 
-/* ---------- File uploader ---------- */
-[data-testid="stFileUploader"] {{
-    background: {THEME['card']} !important;
-    border: 1px solid {THEME['border']} !important;
-    border-radius: 15px !important;
-    padding: 10px !important;
-}}
+/* ===== FEATURE CARD ===== */
+.feature-card {
+    background: #ffffff;
+    color: #1e293b;
+    padding: 18px;
+    border-radius: 15px;
+    margin: 8px 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,.05);
+}
 
-[data-testid="stFileUploader"] * {{
-    color: {THEME['text']} !important;
-}}
+/* ===== HEADINGS ===== */
+h1, h2, h3, h4, h5, h6 {
+    color: #1e293b;
+}
 
-[data-testid="stFileUploaderDropzone"] {{
-    background: {THEME['card']} !important;
-    border-color: {THEME['border']} !important;
-}}
+/* ===== NORMAL TEXT ===== */
+p, label {
+    color: #334155;
+}
 
-/* ---------- Toggle ---------- */
-[data-testid="stToggle"] label,
-[data-testid="stToggle"] label p {{
-    color: {THEME['text']} !important;
-}}
+/* ===== FILE UPLOADER ===== */
+[data-testid="stFileUploader"] {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 10px;
+}
 
-/* ---------- Chat messages ---------- */
-[data-testid="stChatMessage"] {{
-    color: {THEME['text']} !important;
+/* ===== IMAGE ===== */
+[data-testid="stImage"] {
+    border-radius: 15px;
+}
+
+/* ===== CHAT MESSAGE ===== */
+[data-testid="stChatMessage"] {
     border-radius: 18px;
     padding: 12px;
     margin-bottom: 10px;
-}}
+}
 
-[data-testid="stChatMessage"] p,
-[data-testid="stChatMessage"] li {{
-    color: {THEME['text']} !important;
-}}
+/* ===== DARK MODE FIX ===== */
+/* Streamlit dark theme */
+@media (prefers-color-scheme: dark) {
 
-/* ---------- Selectbox / menus ---------- */
-[data-baseweb="select"] > div,
-[data-baseweb="input"] > div {{
-    background: {THEME['input']} !important;
-    color: {THEME['text']} !important;
-    border-color: {THEME['border']} !important;
-}}
+    .stApp {
+        background: linear-gradient(135deg, #0f172a 0%, #111827 50%, #020617 100%);
+    }
 
-/* ---------- Separators ---------- */
-hr {{
-    border-color: {THEME['border']} !important;
-}}
+    .main-title {
+        color: #a5b4fc;
+    }
+
+    .subtitle {
+        color: #cbd5e1;
+    }
+
+    [data-testid="stSidebar"] {
+        background: #111827;
+    }
+
+    [data-testid="stSidebar"] * {
+        color: #f1f5f9;
+    }
+
+    .welcome-card {
+        background: #1e293b;
+        color: #f8fafc;
+    }
+
+    .welcome-card h2 {
+        color: #f8fafc;
+    }
+
+    .welcome-card p {
+        color: #cbd5e1;
+    }
+
+    .feature-card {
+        background: #1e293b;
+        color: #f8fafc;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #f8fafc;
+    }
+
+    p, label {
+        color: #e2e8f0;
+    }
+
+    .stButton > button {
+        background: #1e293b;
+        color: #f8fafc;
+        border: 1px solid #475569;
+    }
+
+    [data-testid="stFileUploader"] {
+        background: #1e293b;
+        color: #f8fafc;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -343,13 +308,6 @@ def start_new_chat():
 # ---------------- SIDEBAR ----------------
 with st.sidebar:
     st.markdown("## 🤖 Gemini ChatBot")
-    st.markdown("### 🎨 Theme")
-    theme_value = st.toggle(
-        "🌙 Dark Mode",
-        value=st.session_state.dark_mode,
-        key="theme_toggle",
-        help="Switch between Light and Dark mode for this chatbot."
-    )
     st.markdown("---")
     if st.button("➕ New Chat", use_container_width=True):
         try:
