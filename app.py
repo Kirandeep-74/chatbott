@@ -19,7 +19,7 @@ def get_secret(name):
 GEMINI_API_KEY = get_secret("GEMINI_API_KEY")
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_KEY = get_secret("SUPABASE_KEY")
-MODEL_NAME = get_secret("GEMINI_MODEL") or "gemini-3.5-flash"
+MODEL_NAME = get_secret("GEMINI_MODEL") or "gemini-3.6-flash"
 
 if not GEMINI_API_KEY:
     st.error("❌ GEMINI_API_KEY is missing. Add it to Streamlit Secrets or your local .env file.")
