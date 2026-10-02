@@ -22,7 +22,7 @@ def get_secret(name):
 GEMINI_API_KEY = get_secret("GEMINI_API_KEY")
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_KEY = get_secret("SUPABASE_PUBLISHABLE_KEY") or get_secret("SUPABASE_KEY")
-MODEL_NAME = get_secret("GEMINI_MODEL") or "gemini-2.5-flash"
+MODEL_NAME = get_secret("GEMINI_MODEL") or "gemini-3.5-flash-lite"
 TTS_MODEL = get_secret("GEMINI_TTS_MODEL") or "gemini-2.5-flash-preview-tts"
 TTS_VOICE = get_secret("GEMINI_TTS_VOICE") or "Kore"
 
